@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =========================================================================
+    // HELPER FUNCTIONS
+    // =========================================================================
+
+    // Verifica se é admin (whitelist fixa de emails)
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.email in [
+               'cleber.ihs@gmail.com', 
+               'luizportal@ecossistemalive.com.br'
+             ];
+    }
+
+    // Busca o documento de mapeamento do usuário logado
+    // Retorna o documento completo ou null se não existir/erro
+    function getUserMapping() {
+      return get(/databases/$(database)/documents/userMappings/$(request.auth.token.email));
+    }
+
+    // Verifica se o usuário atual tem permissão para acessar o cliente alvo
+    function belongsToClient(targetClientId) {
+      // Lógica expressiva (CEL não suporta if/return statement)
+      return isAdmin() || 
+             (
+               request.auth != null && 
+               getUserMapping() != null &&
+               getUserMapping().data.clientId == targetClientId
+             );
+    }
+
+    // =========================================================================
+    // COLEÇÕES
+    // =========================================================================
+    
+    // Dashboards
+    // Acesso: Apenas se o usuário estiver vinculado a este clientId
+    match /dashboards/{clientId} {
+      allow read: if belongsToClient(clientId);
+      allow write: if isAdmin();
+    }
+    
+    // Clients collection  
+    match /clients/{clientId} {
+      allow read: if belongsToClient(clientId);
+      allow create, update, delete: if isAdmin();
+      
+      // Sub-coleções: events e documents
+      // Herda a lógica de belongsToClient(clientId)
+      match /{subcollection}/{docId} {
+        allow read: if belongsToClient(clientId);
+        allow write: if isAdmin();
+      }
+    }
+    
+    // Knowledge Base (admin only por enquanto)
+    match /knowledge/{clientId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Conversations (Memory/RAG system)
+    // Permite leitura/escrita se for admin OU se for o dono do cliente
+    match /conversations/{clientId}/{document=**} {
+      allow read, write: if belongsToClient(clientId);
+    }
+    
+    // User Mappings
+    // Armazena a relação Email -> ClientId
+    match /userMappings/{email} {
+      // Admin pode ler tudo. Usuário só lê o próprio (para debug/check inicial se necessário)
+      allow read: if isAdmin() || (request.auth != null && request.auth.token.email == email);
+      // Apenas admin cria/muda mapeamentos
+      allow write: if isAdmin();
+    }
+  }
+}

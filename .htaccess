@@ -1,0 +1,56 @@
+# Portal de Consultoria - Apache Configuration
+# Este arquivo garante que o React Router funcione corretamente
+
+<IfModule mod_rewrite.c>
+  # Ativa o módulo de reescrita
+  RewriteEngine On
+  
+  # Define a base da URL
+  RewriteBase /
+  
+  # Não reescreve se for o index.html
+  RewriteRule ^index\.html$ - [L]
+  
+  # Não reescreve se o arquivo existir fisicamente
+  RewriteCond %{REQUEST_FILENAME} !-f
+  
+  # Não reescreve se o diretório existir fisicamente
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Redireciona todas as outras requisições para index.html
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Configurações de segurança adicionais
+<IfModule mod_headers.c>
+  # Proteção XSS
+  Header set X-XSS-Protection "1; mode=block"
+  
+  # Previne clickjacking
+  Header set X-Frame-Options "SAMEORIGIN"
+  
+  # Previne MIME sniffing
+  Header set X-Content-Type-Options "nosniff"
+  
+  # Política de referrer
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Compressão GZIP (melhora performance)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Cache de arquivos estáticos
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+</IfModule>
