@@ -510,7 +510,7 @@ interface ModalProps {
 // Features:
 - Logo do cliente (busca dinâmica no Firestore)
 - Menu contextual (Dashboard, Agenda, Documentos, Agentes)
-- Botão de recolher (toggle)
+- Sistema de recolhimento automático (hover-based minimal navigation)
 - Botão "Voltar" (admin retorna para /admin)
 - Logout
 ```

@@ -10,6 +10,13 @@ O sistema funciona como um hub central onde:
 
 ## ✨ Funcionalidades Principais
 
+### 🎨 Identidade Visual V6.1 (Elite)
+O portal utiliza um design system de última geração com foco em imersão e performance:
+- **Login Dashboard**: Experiência imersiva com globo terrestre em alta visibilidade (0.45) e fundo limpo (remoção inteligente de texturas).
+- **Admin Experience**: Cards de clientes com logos vibrantes em background (opacidade 0.4/0.6) e legibilidade reforçada.
+- **Sidebar Minimalista**: Navegação inteligente que expande automaticamente via hover, sem necessidade de controles manuais (setas).
+- **Design Atoms**: Uso extensivo de Glassmorphism, Neon Glows e tipografia premium (Poppins/Merriweather).
+
 ### 1. Painel Administrativo (`/admin`)
 - **Gestão de Clientes**: Visualização em grid de todos os clientes ativos com seus logotipos.
 - **Gerador de Propostas com IA**: Ferramenta integrada com Google Gemini para criar propostas comerciais detalhadas baseadas no framework M.A.P.C.A.
@@ -106,8 +113,7 @@ Para e-mails como Gmail, Hotmail, ou que não contêm o nome da empresa:
         'usuario.generico@gmail.com': 'goianita',
         'diretor@hotmail.com': 'vpclub'
     };
-    ```
-4.  Faça o deploy.
+```
 
 ## 🛡️ Segurança e Boas Práticas
 

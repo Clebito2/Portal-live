@@ -67,13 +67,6 @@ export const Sidebar = ({ isMobileOpen, setIsMobileOpen, client, onChangeClient 
             <div className="p-4 flex flex-col h-full relative z-10">
                 <div className={`flex items-center justify-between mb-8 ${isCollapsed ? 'flex-col gap-4' : ''}`}>
                     <img src={ASSETS.logoLive} className={`transition-all duration-500 var(--spring-bounce) ${isCollapsed ? 'h-6 opacity-80' : 'h-10'}`} alt="Logo" />
-                    <button
-                        onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="hidden md:block text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 p-1.5 rounded-full transition-transform hover:scale-110 active:scale-90"
-                        title={isCollapsed ? "Expandir sidebar" : "Recolher sidebar"}
-                    >
-                        {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-                    </button>
                 </div>
 
                 {client && (

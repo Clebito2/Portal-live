@@ -42,20 +42,17 @@ export const LoginScreen = () => {
         <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden login-screen">
             {/* Bloquear pattern de cubos APENAS nesta tela */}
             <style>{`
-                .login-screen::before {
-                    content: "";
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: #06192a;
-                    z-index: -3;
+                /* Esconder a textura de cubos global do body::after apenas quando o login está ativo */
+                body:has(.login-screen)::after {
+                    display: none !important;
                 }
                 
-                /* Remover textura de cubos na tela de login */
-                .login-screen::after {
-                    display: none !important;
+                /* Backup caso o navegador não suporte :has() - forçar fundo sólido */
+                .login-screen {
+                    background-color: #06192a !important;
+                    position: fixed;
+                    inset: 0;
+                    z-index: 50;
                 }
             `}</style>
 

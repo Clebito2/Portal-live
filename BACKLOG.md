@@ -123,7 +123,12 @@
 
 ## 📝 Notas
 
-### Itens Concluídos Recentemente (Dezembro 2025)
+### ✅ Concluído Recentemente (Janeiro 2026)
+- [x] **Refinamento Login**: Remoção da textura de cubos via `body:has` e ajuste de visibilidade do globo.
+- [x] **Cards Admin**: Logos vibrantes com transparência otimizada e contraste de texto reforçado.
+- [x] **Sidebar Minimalista**: Remoção das setas de toggle, mantendo apenas expansão automática por hover.
+- [x] **Análise de Sistema**: Documentação técnica e arquitetural completa gerada.
+- [x] **Walkthroughs Visuais**: Criação de guia de componentes e diagramas Mermaid.
 - ✅ Sistema RAG Memory implementado
 - ✅ Proteção de API Keys com HTTP referrers
 - ✅ Auto-logout por inatividade (30min)
