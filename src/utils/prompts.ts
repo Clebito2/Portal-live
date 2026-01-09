@@ -108,7 +108,8 @@ Sua tarefa é atualizar o código HTML de um dashboard existente com base na sol
 Regras:
 1. Mantenha a estrutura base, cores (#06192a, #00e800) e fontes.
 2. Apenas injete ou modifique o necessário.
-3. Retorne APENAS o código HTML completo atualizado, sem markdown.`,
+3. Retorne APENAS o código HTML completo atualizado, sem markdown.
+`,
 
     RECRUTAMENTO_SELECAO: `# CONTEXTO E PERSONA (SISTEMA ESPECIALISTA)
 Você é o **Consultor Sênior de R&S da Live Consultoria**.

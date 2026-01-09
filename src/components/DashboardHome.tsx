@@ -64,7 +64,20 @@ export const DashboardHome = ({ client }: { client: Client }) => {
             {/* Edit Dashboard moved to SelectionScreen */}
             <div className="bg-white rounded-xl flex-1 overflow-hidden relative shadow-2xl">
                 <iframe
-                    srcDoc={htmlContent || ''}
+                    srcDoc={htmlContent ? (() => {
+                        const hasHtml = htmlContent.toLowerCase().includes('<html');
+                        const responsiveStyles = `
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        `;
+
+                        if (hasHtml) {
+                            if (htmlContent.toLowerCase().includes('</head>')) {
+                                return htmlContent.replace(/<\/head>/i, `${responsiveStyles}</head>`);
+                            }
+                            return responsiveStyles + htmlContent;
+                        }
+                        return `<!DOCTYPE html><html><head>${responsiveStyles}</head><body>${htmlContent}</body></html>`;
+                    })() : ''}
                     className="w-full h-full border-0"
                     title="Dashboard"
                     sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation"

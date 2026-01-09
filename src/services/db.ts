@@ -107,9 +107,14 @@ export const DB = {
         return localStorage.getItem(`dashboard_${clientId}`);
     },
 
-    saveDashboardHTML: async (clientId: string, html: string) => {
-        if (isFirebaseReady && db) await setDoc(doc(db, 'dashboards', clientId), { html });
-        else localStorage.setItem(`dashboard_${clientId}`, html);
+    saveDashboardHTML: async (clientId: string, html: string, updatedBy?: string) => {
+        const data = {
+            html,
+            lastUpdated: new Date().toISOString(),
+            updatedBy: updatedBy || 'Sistema'
+        };
+        if (isFirebaseReady && db) await setDoc(doc(db, 'dashboards', clientId), data);
+        else localStorage.setItem(`dashboard_${clientId}`, JSON.stringify(data));
     },
 
     // Documents CRUD
@@ -121,15 +126,20 @@ export const DB = {
         const key = `docs_${clientId}`;
         return JSON.parse(localStorage.getItem(key) || '[]');
     },
-    saveDocument: async (clientId: string, docData: Document) => {
+    saveDocument: async (clientId: string, docData: Document, updatedBy?: string) => {
+        const enrichedDoc = {
+            ...docData,
+            updatedAt: new Date().toISOString(),
+            updatedBy: updatedBy || 'Sistema'
+        };
         if (isFirebaseReady && db) {
-            await setDoc(doc(db, `clients/${clientId}/documents`, docData.id), docData);
+            await setDoc(doc(db, `clients/${clientId}/documents`, docData.id), enrichedDoc);
         } else {
             const key = `docs_${clientId}`;
             const list = JSON.parse(localStorage.getItem(key) || '[]');
             const idx = list.findIndex((d: Document) => d.id === docData.id);
-            if (idx >= 0) list[idx] = docData;
-            else list.push(docData);
+            if (idx >= 0) list[idx] = enrichedDoc;
+            else list.push(enrichedDoc);
             localStorage.setItem(key, JSON.stringify(list));
         }
     },
@@ -262,7 +272,7 @@ export const DB = {
                 console.log(`📝 Salvando mapeamento no Firestore para ${email}...`);
                 await setDoc(doc(db, 'userMappings', email), mapping);
                 console.log(`✅ Mapeamento salvo no Firestore para ${email}`);
-                
+
                 // Verify the document was created
                 console.log(`🔍 Verificando se o documento foi criado...`);
                 const verify = await getDoc(doc(db, 'userMappings', email));
@@ -270,7 +280,7 @@ export const DB = {
                     console.error('❌ Documento não foi criado no Firestore');
                     return false;
                 }
-                
+
                 const data = verify.data();
                 console.log(`✅ Documento verificado:`, data);
                 return true;
@@ -297,5 +307,67 @@ export const DB = {
             mappings = mappings.filter((m: any) => m.email !== email);
             localStorage.setItem('userMappings', JSON.stringify(mappings));
         }
+    },
+
+    // Admin Session Tracking
+    getAdminLastSeen: async (email: string) => {
+        if (isFirebaseReady && db) {
+            const d = await getDoc(doc(db, 'adminSessions', email));
+            return d.exists() ? d.data().lastSeen : null;
+        }
+        return localStorage.getItem(`admin_last_seen_${email}`);
+    },
+
+    updateAdminLastSeen: async (email: string) => {
+        const now = new Date().toISOString();
+        if (isFirebaseReady && db) {
+            await setDoc(doc(db, 'adminSessions', email), { lastSeen: now });
+        } else {
+            localStorage.setItem(`admin_last_seen_${email}`, now);
+        }
+    },
+
+    getAllUpdates: async (lastSeen: string) => {
+        const updates: any[] = [];
+
+        if (isFirebaseReady && db) {
+            try {
+                // Check Dashboards
+                const dashSnap = await getDocs(collection(db, 'dashboards'));
+                dashSnap.docs.forEach(d => {
+                    const data = d.data();
+                    if (data.lastUpdated && data.lastUpdated > lastSeen) {
+                        updates.push({
+                            type: 'dashboard',
+                            clientId: d.id,
+                            updatedAt: data.lastUpdated,
+                            updatedBy: data.updatedBy || 'Desconhecido'
+                        });
+                    }
+                });
+
+                // Check Documents (This is more expensive, we scan all clients)
+                const clientsSnap = await getDocs(collection(db, 'clients'));
+                for (const clientDoc of clientsSnap.docs) {
+                    const docsSnap = await getDocs(collection(db, `clients/${clientDoc.id}/documents`));
+                    docsSnap.docs.forEach(doc => {
+                        const data = doc.data();
+                        if (data.updatedAt && data.updatedAt > lastSeen) {
+                            updates.push({
+                                type: 'document',
+                                clientId: clientDoc.id,
+                                clientName: clientDoc.data().name,
+                                title: data.title,
+                                updatedAt: data.updatedAt,
+                                updatedBy: data.updatedBy || 'Desconhecido'
+                            });
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Error fetching updates:", e);
+            }
+        }
+        return updates;
     }
 };

@@ -19,6 +19,7 @@ O portal utiliza um design system de última geração com foco em imersão e pe
 
 ### 1. Painel Administrativo (`/admin`)
 - **Gestão de Clientes**: Visualização em grid de todos os clientes ativos com seus logotipos.
+- **Sistema de Notificações**: Pop-up automático ao fazer login que informa todas as alterações em dashboards e documentos feitas por outros administradores desde o seu último acesso.
 - **Gerador de Propostas com IA**: Ferramenta integrada com Google Gemini para criar propostas comerciais detalhadas baseadas no framework M.A.P.C.A.
 - **Cadastro Automatizado**: Criação de novos clientes e ambientes automaticamente após a aprovação da proposta.
 - **Ferramentas da Consultoria**: Página exclusiva para admins com acesso a recursos, metodologias e ferramentas auxiliares.
@@ -162,6 +163,13 @@ Ao adicionar novos clientes, sempre use logos com as seguintes especificações:
 **Propriedade CSS essencial:** `object-contain` (mantém proporção original sem cortes)
 
 ## 📝 Histórico de Alterações e Correções Recentes
+
+### Atualizações de IA e Colaboração (Janeiro 2026)
+1.  **Sistema de Notificações de Atualizações**:
+    - **Nova Funcionalidade**: Pop-up inteligente para administradores que resume todas as alterações em dashboards e documentos desde o último login.
+    - **Dinâmica Multi-Admin**: Rastreamento individual por administrador (`lastSeen`), permitindo que cada um saiba o que seus colegas alteraram.
+    - **Metadados de Autoria**: Agora o sistema registra `updatedBy` em cada alteração, informando exatamente quem foi o responsável pela mudança.
+    - **Arquivos**: `src/components/AdminUpdatesModal.tsx`, `src/services/db.ts` (sessões e updates).
 
 ### Correções Críticas (Dezembro 2025)
 1.  **Segurança de Login Reforçada**:

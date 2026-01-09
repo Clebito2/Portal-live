@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { useAuth } from '../context/AuthContext';
 import { MOCK_CLIENTS, ASSETS, ADMIN_ONLY_CLIENTS } from '../utils/constants';
-import { Menu } from 'lucide-react';
+import { Menu, LogOut } from 'lucide-react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { Client } from '../types';
 import { DB } from '../services/db';
@@ -105,11 +105,14 @@ export const Dashboard = () => {
             />
 
             <main className="flex-1 overflow-hidden flex flex-col h-screen relative">
-                {/* Header Mobile - Glassmorphism */}
-                <div className="md:hidden p-4 flex justify-between items-center border-b border-white/10 relative z-30"
+                {/* Header Mobile - Mais compacto e eficiente (V6.2) */}
+                <div className="md:hidden p-2 flex justify-between items-center border-b border-white/10 relative z-30"
                     style={{ background: 'var(--live-glass)', backdropFilter: 'var(--glass-blur)' }}>
-                    <img src={ASSETS.logoLive} className="h-6" alt="Logo" />
-                    <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="text-white hover:text-[#00e800] transition-colors"><Menu /></button>
+                    <img src={ASSETS.logoLive} className="h-6 object-contain" alt="Logo" />
+                    <div className="flex items-center gap-3">
+                        <button onClick={logout} className="text-red-400 p-1 hover:text-red-300 transition-colors" title="Sair"><LogOut size={18} /></button>
+                        <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="text-white hover:text-[#00e800] transition-colors"><Menu size={24} /></button>
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar">

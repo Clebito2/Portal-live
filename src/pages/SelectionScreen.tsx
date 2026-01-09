@@ -10,6 +10,7 @@ import { LogOut, Briefcase, RefreshCw, Github, Loader2, X, RotateCcw, CheckCircl
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Modal } from '../components/Modal';
+import { AdminUpdatesModal } from '../components/AdminUpdatesModal';
 
 // 🛡️ VALIDAÇÃO DE HTML GERADO PELA IA
 interface ValidationResult {
@@ -127,9 +128,41 @@ export const SelectionScreen = () => {
     // Security Diagnosis Modal
     const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
 
+    // Admin Updates State
+    const [isUpdatesModalOpen, setIsUpdatesModalOpen] = useState(false);
+    const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
+
     useEffect(() => {
         loadClients();
+        checkForUpdates();
     }, []);
+
+    const checkForUpdates = async () => {
+        if (user?.role === 'admin' && user.email) {
+            console.log("🔍 Verificando atualizações para:", user.email);
+            const lastSeen = await DB.getAdminLastSeen(user.email);
+            console.log("📅 Último acesso registrado:", lastSeen);
+
+            if (lastSeen) {
+                const updates = await DB.getAllUpdates(lastSeen);
+                console.log("🆕 Atualizações encontradas:", updates.length);
+                if (updates.length > 0) {
+                    setRecentUpdates(updates);
+                    setIsUpdatesModalOpen(true);
+                }
+            } else {
+                console.log("ℹ️ Primeiro acesso com este sistema de notificações. Registrando data atual.");
+            }
+            // DB.updateAdminLastSeen(user.email); // REMOVIDO: Só atualizamos ao clicar em "Entendido"
+        }
+    };
+
+    const handleAcknowledgeUpdates = async () => {
+        if (user?.email) {
+            await DB.updateAdminLastSeen(user.email);
+            setIsUpdatesModalOpen(false);
+        }
+    };
 
     const loadClients = async () => {
         let list = await DB.getClients();
@@ -221,7 +254,7 @@ export const SelectionScreen = () => {
             await DB.saveDocument(clientId, newDoc);
 
             // NEW: Set the generated proposal as the initial Dashboard HTML
-            await DB.saveDashboardHTML(clientId, generatedProposal);
+            await DB.saveDashboardHTML(clientId, generatedProposal, user?.name);
 
             loadClients();
             setIsCreateModalOpen(false);
@@ -430,7 +463,7 @@ SOLICITAÇÃO DO USUÁRIO:
 
     const handleSaveDashboardUpdate = async () => {
         if (!updateClientId || !previewHtml) return;
-        await DB.saveDashboardHTML(updateClientId, previewHtml);
+        await DB.saveDashboardHTML(updateClientId, previewHtml, user?.name);
         alert("Dashboard atualizado com sucesso!");
         setIsUpdateModalOpen(false);
         setPreviewHtml(null);
@@ -624,6 +657,14 @@ SOLICITAÇÃO DO USUÁRIO:
                 <Modal isOpen={isSecurityModalOpen} onClose={() => setIsSecurityModalOpen(false)} title="Diagnóstico de Segurança" maxWidth="max-w-4xl">
                     <SecurityDiagnosis onClose={() => setIsSecurityModalOpen(false)} />
                 </Modal>
+
+                {/* ADMIN UPDATES MODAL */}
+                <AdminUpdatesModal
+                    isOpen={isUpdatesModalOpen}
+                    onClose={() => setIsUpdatesModalOpen(false)}
+                    onConfirm={handleAcknowledgeUpdates}
+                    updates={recentUpdates}
+                />
             </div>
         </div>
     );

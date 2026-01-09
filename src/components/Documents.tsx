@@ -37,7 +37,7 @@ export const Documents = ({ clientId }: { clientId: string }) => {
             id: currentDoc.id || Date.now().toString(),
             date: currentDoc.date || new Date().toISOString().split('T')[0]
         };
-        await DB.saveDocument(clientId, newDoc);
+        await DB.saveDocument(clientId, newDoc, user?.name);
         loadDocs();
         setIsModalOpen(false);
     };

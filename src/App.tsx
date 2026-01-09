@@ -47,9 +47,11 @@ const AppRoutes = () => {
 
 import { DB } from './services/db';
 import { useAutoLogout } from './hooks/useAutoLogout';
+import { useTabCloseLogout } from './hooks/useTabCloseLogout';
 
 const AppContent = () => {
     useAutoLogout(); // Ativar auto-logout por inatividade
+    useTabCloseLogout(); // Ativar auto-logout ao fechar aba/navegador
     return <AppRoutes />;
 };
 
