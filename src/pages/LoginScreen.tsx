@@ -69,7 +69,7 @@ export const LoginScreen = () => {
 
             <div className="w-full max-w-md card-v4 p-8 relative z-10 fade-in">
                 <div className="text-center mb-8">
-                    <img src={ASSETS.logoLive} alt="Live" className="h-16 mx-auto mb-4 drop-shadow-[0_0_20px_rgba(0,232,0,0.4)] animate-pulse-slow" />
+                    <img src={ASSETS.logoLive} alt="Live" className="h-24 mx-auto mb-4 drop-shadow-[0_0_20px_rgba(0,232,0,0.4)] animate-pulse-slow" />
                     <h2 className="text-3xl font-bold font-serif kinetic-title">Acesso Restrito</h2>
                     <p className="text-slate-400 text-sm mt-3 tracking-wide">Consultoria Ecossistema Live</p>
                 </div>

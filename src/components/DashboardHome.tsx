@@ -64,20 +64,22 @@ export const DashboardHome = ({ client }: { client: Client }) => {
             {/* Edit Dashboard moved to SelectionScreen */}
             <div className="bg-white rounded-xl flex-1 overflow-hidden relative shadow-2xl">
                 <iframe
-                    srcDoc={htmlContent ? (() => {
-                        const hasHtml = htmlContent.toLowerCase().includes('<html');
-                        const responsiveStyles = `
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        `;
-
-                        if (hasHtml) {
-                            if (htmlContent.toLowerCase().includes('</head>')) {
-                                return htmlContent.replace(/<\/head>/i, `${responsiveStyles}</head>`);
-                            }
-                            return responsiveStyles + htmlContent;
-                        }
-                        return `<!DOCTYPE html><html><head>${responsiveStyles}</head><body>${htmlContent}</body></html>`;
-                    })() : ''}
+                    srcDoc={htmlContent ? `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                            <style>
+                                * { max-width: 100% !important; box-sizing: border-box !important; }
+                                body { margin: 0; padding: 0; width: 100% !important; overflow-x: hidden !important; }
+                                img, video, canvas { height: auto !important; }
+                                .table-container { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+                                table { width: 100% !important; }
+                            </style>
+                        </head>
+                        <body>${htmlContent}</body>
+                        </html>
+                    ` : ''}
                     className="w-full h-full border-0"
                     title="Dashboard"
                     sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-top-navigation-by-user-activation"

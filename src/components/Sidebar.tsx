@@ -71,7 +71,7 @@ export const Sidebar = ({ isMobileOpen, setIsMobileOpen, client, onChangeClient 
 
             <div className="p-4 flex flex-col h-full relative z-10">
                 <div className={`flex items-center justify-between mb-8 ${isCollapsed ? 'flex-col gap-4' : ''}`}>
-                    <img src={ASSETS.logoLive} className={`transition-all duration-500 var(--spring-bounce) object-contain ${isCollapsed ? 'h-6 opacity-80' : 'h-10 max-h-8'}`} alt="Logo" />
+                    <img src={ASSETS.logoLive} className={`transition-all duration-500 var(--spring-bounce) ${isCollapsed ? 'h-6 opacity-80' : 'h-10'}`} alt="Logo" />
                 </div>
 
                 {client && (

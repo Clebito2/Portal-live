@@ -16,8 +16,12 @@ REGRAS DE OURO (DESIGN SYSTEM V3):
     *   Geral: var(--font-primary) ('Poppins')
     *   Diagnóstico: var(--font-secondary) ('Merriweather') - EXCLUSIVO PARA ESTA SEÇÃO.
 3.  **Layout:**
-    *   Mobile-First.
-    *   Container centralizado.
+    *   **Mobile-First Responsivo:**
+    *   JAMAIS use larguras fixas em pixels (ex: width: 800px).
+    *   Use Width: 100% ou max-width: 100%.
+    *   Containers flexíveis e grids responsivos são obrigatórios.
+    *   Garanta que tabelas tenham overflow-x: auto.
+    *   Meta viewport tag deve estar presente no <head>.
     *   Espaçamento via tokens (--space-md, etc).
 4.  **Componentes:**
     *   Use .card para TODOS os blocos de conteúdo.
@@ -108,7 +112,8 @@ Sua tarefa é atualizar o código HTML de um dashboard existente com base na sol
 Regras:
 1. Mantenha a estrutura base, cores (#06192a, #00e800) e fontes.
 2. Apenas injete ou modifique o necessário.
-3. Retorne APENAS o código HTML completo atualizado, sem markdown.
+3. **Responsividade Global:** Garanta que todo o conteúdo injetado seja 100% responsivo, sem larguras fixas que quebrem no mobile.
+4. Retorne APENAS o código HTML completo atualizado, sem markdown.
 `,
 
     RECRUTAMENTO_SELECAO: `# CONTEXTO E PERSONA (SISTEMA ESPECIALISTA)
