@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, isFirebaseReady } from '../services/firebase';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 import { User } from '../types';
 import { MOCK_CLIENTS, ADMIN_EMAILS, MANUAL_CLIENT_MAPPINGS } from '../utils/constants';
 import { DB } from '../services/db';
@@ -10,6 +10,7 @@ interface AuthContextType {
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -99,8 +100,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(null);
     };
 
+    const resetPassword = async (email: string) => {
+        if (isFirebaseReady && auth) {
+            await sendPasswordResetEmail(auth, email);
+        } else {
+            throw new Error('Serviço de autenticação indisponível. Contate o suporte.');
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, resetPassword }}>
             {children}
         </AuthContext.Provider>
     );

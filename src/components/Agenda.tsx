@@ -170,12 +170,16 @@ export const Agenda = ({ clientId, googleCalendarId }: { clientId: string, googl
                             {/* @ts-ignore */}
                             <Button variant={event.joined ? "primary" : "secondary"} onClick={() => {
                                 if (event.link) {
-                                    window.open(event.link, '_blank');
+                                    let url = event.link.trim();
+                                    if (!/^https?:\/\//i.test(url)) {
+                                        url = 'https://' + url;
+                                    }
+                                    window.open(url, '_blank', 'noopener,noreferrer');
                                 } else {
                                     toggleJoin(event);
                                 }
                             }}>
-                                {event.joined ? <><CheckCircle size={18} /> Inscrito</> : "Inscrever-se"}
+                                {event.joined ? <><CheckCircle size={18} /> Inscrito</> : (event.link ? "Acessar Link" : "Inscrever-se")}
                             </Button>
                         </div>
                     </div>

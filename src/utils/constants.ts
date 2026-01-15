@@ -19,7 +19,8 @@ export const MANUAL_CLIENT_MAPPINGS: Record<string, string> = {
     'gestor@plur.com': 'plur',
     'gestor@autocare.com': 'autocare',
     'gestor@lideraf.com': 'lideranca',
-    'gestor@tecnoit.com': 'The_Catalyst'
+    'gestor@tecnoit.com': 'The_Catalyst',
+    'ibra@tecnoit.com.br': 'The_Catalyst'
 };
 
 // @ts-ignore
@@ -30,7 +31,7 @@ export const ASSETS = {
     logoLive: "https://raw.githubusercontent.com/Clebito2/ApresentacaoConsultoria/main/Logo%20live%20oficial-36.png",
     luizPortal: "https://raw.githubusercontent.com/Clebito2/ConsultoriaLive/main/FOTO_LUIZPORTAL.jpeg",
     iagoAvatar: "https://raw.githubusercontent.com/EcossistemaLive/live-template/master/Gemini_Generated_Image_e5mxdme5mxdme5mx.png",
-    ferramentas: "https://raw.githubusercontent.com/Clebito2/Portal-Consultoria/refs/heads/main/ferramentas.png",
+    ferramentas: "https://raw.githubusercontent.com/Clebito2/Portal-Consultoria/main/ferramentas.png",
     logos: {
         goianita: "https://raw.githubusercontent.com/Clebito2/Goianita/main/Goianita.png",
         plur: "https://github.com/Clebito2/Plur/raw/main/PLUR%20Movimento-03.png",
@@ -38,7 +39,7 @@ export const ASSETS = {
         lideranca: "https://raw.githubusercontent.com/EcossistemaLive/Dashboard_goianita/refs/heads/main/Logo%20Live-26.png",
         theCatalyst: "https://raw.githubusercontent.com/EcossistemaLive/Catalyst-Experience/refs/heads/main/the%20catalyst.png",
         vpclub: "https://ui-avatars.com/api/?name=VP+Club&background=10b981&color=fff&size=200",
-        ferramentasConsultoria: "https://raw.githubusercontent.com/Clebito2/Portal-Consultoria/refs/heads/main/ferramentas.png"
+        ferramentasConsultoria: "https://raw.githubusercontent.com/Clebito2/Portal-Consultoria/main/ferramentas.png"
     }
 };
 

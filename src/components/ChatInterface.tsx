@@ -86,12 +86,20 @@ export const ChatInterface = ({ user, client, onClose, promptType = 'IAGO', titl
 
             // For R&S agent, inject client name into system instruction
             let systemInstruction = PROMPTS[promptType];
+
             if (promptType === 'RECRUTAMENTO_SELECAO' && client.name) {
                 systemInstruction = `${PROMPTS[promptType]}\n\n**CONTEXTO AUTOMÁTICO:** A empresa cliente já foi identificada como "${client.name}". Você NÃO precisa perguntar o nome da empresa novamente. Prossiga diretamente para os modos de trabalho.`;
+            } else if (promptType === 'PLUR_AGENT') {
+                // Fetch Base Knowledge for Plur
+                const { DB } = await import('../services/db');
+                const knowledge = await DB.getBaseKnowledge(client.id);
+                if (knowledge) {
+                    systemInstruction = `${PROMPTS[promptType]}\n\n=== BASE DE CONHECIMENTO (FONTE DE VERDADE) ===\n${knowledge}\n\nUse as informações acima para responder.`;
+                }
             }
 
             const text = await callGeminiAPI(
-                newMsgs.map(m => ({ role: m.role, text: m.text })),  // ✅ Histórico completo
+                newMsgs.map(m => ({ role: m.role as 'user' | 'model', text: m.text })),  // ✅ Histórico completo
                 { systemInstruction }
             );
 
@@ -110,16 +118,29 @@ export const ChatInterface = ({ user, client, onClose, promptType = 'IAGO', titl
         }
     };
 
+    const getAvatar = () => {
+        if (promptType === 'IAGO') return ASSETS.iagoAvatar || client.logo;
+        return client.logo || ASSETS.logoLive;
+    };
+
+    const getSubtitle = () => {
+        switch (promptType) {
+            case 'RECRUTAMENTO_SELECAO': return 'Consultor de R&S';
+            case 'PLUR_AGENT': return 'Assistente Especializado';
+            default: return 'Iago - VP Club';
+        }
+    }
+
     return (
         <div className="flex flex-col h-full max-w-4xl mx-auto bg-[#0a253a] rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
             <div className="p-4 bg-gradient-to-r from-yellow-600/20 to-transparent border-b border-yellow-600/30 flex items-center gap-4 justify-between">
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-500">
-                        <img src={ASSETS.iagoAvatar || client.logo} className="w-full h-full object-cover" alt="Assistant" />
+                        <img src={getAvatar()} className="w-full h-full object-cover" alt="Assistant" />
                     </div>
                     <div>
                         <h3 className="font-bold text-white">{title || 'Assistente de Onboarding'}</h3>
-                        <p className="text-xs text-yellow-500">{promptType === 'RECRUTAMENTO_SELECAO' ? 'Consultor de R&S' : 'Iago - VP Club'}</p>
+                        <p className="text-xs text-yellow-500">{getSubtitle()}</p>
                     </div>
                 </div>
                 {onClose && (

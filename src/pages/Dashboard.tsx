@@ -105,15 +105,13 @@ export const Dashboard = () => {
             />
 
             <main className="flex-1 overflow-hidden flex flex-col h-screen relative">
-                {/* Header Mobile - Glassmorphism */}
-                <div className="md:hidden p-4 flex justify-between items-center border-b border-white/10 relative z-30"
-                    style={{ background: 'var(--live-glass)', backdropFilter: 'var(--glass-blur)' }}>
-                    <img src={ASSETS.logoLive} className="h-6" alt="Logo" />
-                    <div className="flex items-center gap-4">
-                        <button onClick={logout} className="text-red-400 p-1 hover:text-red-300 transition-colors" title="Sair"><LogOut size={20} /></button>
-                        <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="text-white hover:text-[#00e800] transition-colors"><Menu /></button>
-                    </div>
-                </div>
+                {/* Floating Menu Button for Mobile */}
+                <button
+                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                    className="md:hidden fixed top-4 right-4 z-40 p-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-white hover:text-[#00e800] transition-colors shadow-lg"
+                >
+                    <Menu size={24} />
+                </button>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                     <Outlet context={{ clientId: currentClient.id, client: currentClient }} />

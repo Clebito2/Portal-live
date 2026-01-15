@@ -1,5 +1,5 @@
-import React from 'react';
-import { LayoutDashboard, Calendar, FileText, Sparkles, LogOut, ArrowLeft, ChevronLeft, ChevronRight, Brain } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { LayoutDashboard, Calendar, FileText, Sparkles, LogOut, ArrowLeft, ChevronLeft, ChevronRight, Brain, Wrench, Building2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ASSETS, CLIENTS_WITH_AGENTS } from '../utils/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -18,6 +18,12 @@ export const Sidebar = ({ isMobileOpen, setIsMobileOpen, client, onChangeClient 
 
     // Iniciar colapsada por padrão
     const [isCollapsed, setIsCollapsed] = React.useState(true);
+    const [imgError, setImgError] = useState(false);
+
+    // Reset error state when client changes
+    useEffect(() => {
+        setImgError(false);
+    }, [client?.id]);
 
     // Handlers de hover
     const handleMouseEnter = () => {
@@ -77,7 +83,18 @@ export const Sidebar = ({ isMobileOpen, setIsMobileOpen, client, onChangeClient 
                 {client && (
                     <div className={`rounded-xl border border-white/5 flex items-center gap-3 transition-all duration-300 ${isCollapsed ? 'p-1 justify-center bg-transparent' : 'p-3 bg-white/5 shadow-inner'}`}>
                         <div className="w-12 h-12 rounded-full border border-[#00e800]/30 overflow-hidden flex-shrink-0 flex items-center justify-center p-1 bg-black/40">
-                            <img src={client.logo} className="w-full h-full object-contain p-1 rounded-full" alt={client.name} />
+                            {!imgError ? (
+                                <img
+                                    src={client.logo}
+                                    className="w-full h-full object-contain p-1 rounded-full"
+                                    alt={client.name}
+                                    onError={() => setImgError(true)}
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-800 rounded-full">
+                                    {client.id === 'ferramentas' ? <Wrench size={20} /> : <Building2 size={20} />}
+                                </div>
+                            )}
                         </div>
                         {!isCollapsed && (
                             <div className="flex-1 min-w-0 overflow-hidden">
@@ -104,6 +121,17 @@ export const Sidebar = ({ isMobileOpen, setIsMobileOpen, client, onChangeClient 
                             </button>
                         )
                     })}
+
+                    {/* Mobile Only Logout Button inside Nav */}
+                    <div className="md:hidden pt-4 mt-4 border-t border-white/5">
+                        <button
+                            onClick={() => logout()}
+                            className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-red-400 hover:text-white hover:bg-red-500/10 transition-all duration-300"
+                        >
+                            <LogOut size={20} className="flex-shrink-0" />
+                            <span>Sair do Sistema</span>
+                        </button>
+                    </div>
                 </nav>
 
                 <div className="pt-4 border-t border-white/5 space-y-2">

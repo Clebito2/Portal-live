@@ -665,6 +665,19 @@ SOLICITAÇÃO DO USUÁRIO:
                     onConfirm={handleAcknowledgeUpdates}
                     updates={recentUpdates}
                 />
+                {/* DIAGNOSTIC FIX BUTTON (HIDDEN FEATURE) */}
+                <div className="mt-8 text-center opacity-50 hover:opacity-100 transition-opacity">
+                    {/* @ts-ignore */}
+                    <Button variant="ghost" onClick={async () => {
+                        if (confirm('Deseja criar o vínculo de ibra@tecnoit.com.br no Firestore?')) {
+                            const success = await DB.addUserMapping('ibra@tecnoit.com.br', 'The_Catalyst', user?.name || 'Admin');
+                            if (success) alert('Vínculo criado no Firestore com sucesso!');
+                            else alert('Falha ao criar vínculo. Verifique o console.');
+                        }
+                    }} className="text-xs text-slate-500 hover:text-red-400">
+                        🛠️ Corrigir Acesso Ibra (Database Fix)
+                    </Button>
+                </div>
             </div>
         </div>
     );

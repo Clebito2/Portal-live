@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { UserCheck, Brain, Target, Users, Loader2, X, RotateCcw, CheckCircle } from 'lucide-react';
+import { UserCheck, Brain, Target, Users, Loader2, X, RotateCcw, CheckCircle, Sparkles } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ChatInterface } from './ChatInterface';
+import { GeminiEmbed } from './GeminiEmbed';
 import { GoogleGenAI } from "@google/genai";
 import { GEMINI_API_KEY } from '../utils/constants';
 import { PROMPTS } from '../utils/prompts';
@@ -27,6 +28,7 @@ export const Agentes = () => {
     const { client } = useOutletContext<{ client: Client }>();
     const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
     const [isRSChatOpen, setIsRSChatOpen] = useState(false);
+    const [isPlurChatOpen, setIsPlurChatOpen] = useState(false);
 
     // Estados para gerador de propostas
     const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +54,14 @@ export const Agentes = () => {
             color: 'from-blue-500 to-blue-600',
             route: '' // Será aberto por modal
         },
+        {
+            id: 'plur_agent',
+            title: 'Agente Plur',
+            description: 'Assistente Especializado Plur (Gemini Gem)',
+            icon: Sparkles,
+            color: 'from-purple-500 to-purple-600',
+            route: ''
+        },
         // Espaço para novos agentes
         {
             id: 'placeholder1',
@@ -66,11 +76,17 @@ export const Agentes = () => {
     // Filtrar agentes: clientes veem apenas R&S, admins veem todos
     const agentes = user?.role === 'admin'
         ? allAgents
-        : allAgents.filter(agent => agent.id === 'rs' || agent.id === 'placeholder1');
+        : allAgents.filter(agent =>
+            agent.id === 'rs' ||
+            agent.id === 'placeholder1' ||
+            (client.id === 'plur' && agent.id === 'plur_agent')
+        );
 
     const handleAgentClick = (agent: Agent) => {
         if (agent.id === 'rs') {
             setIsRSChatOpen(true);
+        } else if (agent.id === 'plur_agent') {
+            setIsPlurChatOpen(true);
         } else if (agent.id === 'propostas') {
             setIsProposalModalOpen(true);
         } else if (agent.route) {
@@ -138,7 +154,7 @@ export const Agentes = () => {
                     <div
                         key={agente.id}
                         onClick={() => handleAgentClick(agente)}
-                        className={`card-v4 p-6 hover:scale-105 transition-all duration-300 group ${(agente.id === 'rs' || agente.id === 'propostas' || agente.route) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                        className={`card-v4 p-6 hover:scale-105 transition-all duration-300 group ${(agente.id === 'rs' || agente.id === 'propostas' || agente.id === 'plur_agent' || agente.route) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
                     >
                         <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${agente.color} flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-shadow`}>
                             <agente.icon size={40} className="text-white" />
@@ -149,7 +165,7 @@ export const Agentes = () => {
                         <p className="text-slate-400 text-sm leading-relaxed">
                             {agente.description}
                         </p>
-                        {(agente.id === 'rs' || agente.id === 'propostas' || agente.route) && (
+                        {(agente.id === 'rs' || agente.id === 'propostas' || agente.id === 'plur_agent' || agente.route) && (
                             <div className="mt-4 text-[#00e800] text-sm font-semibold flex items-center gap-2">
                                 Acessar Agente →
                             </div>
@@ -175,6 +191,19 @@ export const Agentes = () => {
                             onClose={() => setIsRSChatOpen(false)}
                             promptType="RECRUTAMENTO_SELECAO"
                             title="Consultor de R&S - Live Consultoria"
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Modal ChatInterface Plur (Agora usando Embed) */}
+            {isPlurChatOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+                    <div className="w-full h-full max-w-[95vw] max-h-[90vh]">
+                        <GeminiEmbed
+                            url="https://gemini.google.com/gem/11mYioaYKWK_wC0bOc7U-BGXzsCA0YHaW?usp=sharing"
+                            title="Plur Agent - Gemini Especializado"
+                            onClose={() => setIsPlurChatOpen(false)}
                         />
                     </div>
                 </div>

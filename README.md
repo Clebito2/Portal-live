@@ -362,6 +362,20 @@ Ao adicionar novos clientes, sempre use logos com as seguintes especificações:
       <a href="https://drive.google.com/..." target="_blank" rel="noopener noreferrer">Acessar Material</a>
       ```
 
+### Correções e Ajustes (Janeiro 2026)
+
+**Data**: 15 de Janeiro de 2026
+
+1.  **Correção de Mapeamento de Clientes**:
+    *   **Problema**: Usuário `ibra@tecnoit.com.br` acessava cliente incorreto ou via tela branca.
+    *   **Solução**: Reversão do mapeamento para `The_Catalyst` e remoção do cliente duplicado `Ibrahim Boufleur` do código-fonte.
+    *   **Ferramenta Admin**: Adicionado botão "Corrigir Acesso Ibra" no painel administrativo para criar regras de segurança faltantes no Firestore.
+
+2.  **Correção de Links na Agenda**:
+    *   **Problema**: Links de eventos externos (Google Meet) abriam como sub-rotas relativas.
+    *   **Solução**: Normalização automática de URLs (adição de `https://` se ausente) e uso de `window.open` em nova aba.
+    *   **UX**: Botão renomeado para "Acessar Link" quando há URL externa, mantendo "Inscrever-se" para eventos internos.
+
 ### RAG Memory System e Agentes para Clientes (Dezembro 2025 - Parte 15)
 
 **Data**: 16 de Dezembro de 2025
