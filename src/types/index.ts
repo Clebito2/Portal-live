@@ -3,6 +3,7 @@ export interface User {
     name: string;
     role: 'admin' | 'client';
     clientId?: string;
+    clientIds?: string[];
 }
 
 export interface Client {
@@ -42,6 +43,7 @@ export interface ChatMessage {
 export interface UserMapping {
     email: string;
     clientId: string;
+    clientIds?: string[];
     createdAt: string;
     createdBy: string;
 }

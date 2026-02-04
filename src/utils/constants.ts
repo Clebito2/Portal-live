@@ -20,12 +20,20 @@ export const MANUAL_CLIENT_MAPPINGS: Record<string, string> = {
     'gestor@autocare.com': 'autocare',
     'gestor@lideraf.com': 'lideranca',
     'gestor@tecnoit.com': 'The_Catalyst',
-    'ibra@tecnoit.com.br': 'The_Catalyst'
+    'ibra@tecnoit.com.br': 'The_Catalyst',
+    'brunoconsultoriamave@gmail.com': 'The_Catalyst'
+};
+
+export const MANUAL_MULTI_CLIENT_MAPPINGS: Record<string, string[]> = {
+    'marianaoliveira.eng@hotmail.com': ['The_Catalyst', 'lideranca']
 };
 
 // @ts-ignore
-// Tente ler do .env. Se falhar, você pode colar a chave diretamente abaixo (entre as aspas) como último recurso.
-export const GEMINI_API_KEY = "AIzaSyCVMsuZDHBKs2lcIL9qlQK3ePQ5MOuTPok";
+export const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
+
+if (!GEMINI_API_KEY) {
+    console.error("CRITICAL ERROR: VITE_GEMINI_API_KEY is missing. Please check your .env.local file.");
+}
 
 export const ASSETS = {
     logoLive: "https://raw.githubusercontent.com/Clebito2/ApresentacaoConsultoria/main/Logo%20live%20oficial-36.png",

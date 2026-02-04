@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI } from "@google/genai";
+
 import { Send, X } from 'lucide-react';
 import { Client, User, ChatMessage } from '../types';
-import { GEMINI_API_KEY, ASSETS } from '../utils/constants';
+import { ASSETS, GEMINI_API_KEY } from '../utils/constants';
 import { PROMPTS } from '../utils/prompts';
 import ReactMarkdown from 'react-markdown';
 
@@ -62,7 +62,7 @@ export const ChatInterface = ({ user, client, onClose, promptType = 'IAGO', titl
         if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, [messages]);
 
-    const getApiKey = () => GEMINI_API_KEY || localStorage.getItem('firebase_key') || '';
+
 
     const handleSend = async () => {
         if (!input.trim()) return;

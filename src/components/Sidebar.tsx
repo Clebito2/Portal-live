@@ -40,6 +40,11 @@ export const Sidebar = ({ isMobileOpen, setIsMobileOpen, client, onChangeClient 
         { id: `/dashboard/${client?.id || ''}/documents`, label: 'Documentos', icon: FileText },
     ];
 
+    // Adicionar Projetos para The Catalyst e Ferramentas
+    if (client?.id === 'The_Catalyst' || client?.id === 'ferramentas') {
+        menuItems.push({ id: `/dashboard/${client?.id || ''}/projects`, label: 'Projetos', icon: Sparkles });
+    }
+
     // Adicionar Agentes para Admin OU clientes autorizados
     const clientHasAgentAccess = client?.id && CLIENTS_WITH_AGENTS.includes(client.id);
     if (user?.role === 'admin' || clientHasAgentAccess) {
@@ -139,6 +144,13 @@ export const Sidebar = ({ isMobileOpen, setIsMobileOpen, client, onChangeClient 
                         <button onClick={() => navigate('/admin')} className={`w-full flex items-center gap-2 text-xs text-slate-400 hover:text-white p-3 hover:bg-white/5 rounded-lg transition-colors ${isCollapsed ? 'justify-center' : ''}`} title={isCollapsed ? "Voltar" : undefined}>
                             <ArrowLeft size={16} />
                             {!isCollapsed && "Voltar ao Admin"}
+                        </button>
+                    )}
+                    {/* Botão de Trocar Cliente (Apenas se tiver acesso a múltiplos) */}
+                    {(user?.clientIds && user.clientIds.length > 1) && (
+                        <button onClick={() => navigate('/select-client')} className={`w-full flex items-center gap-2 text-xs text-[#00e800] hover:text-[#00c000] p-3 hover:bg-[#00e800]/10 rounded-lg transition-colors ${isCollapsed ? 'justify-center' : ''}`} title={isCollapsed ? "Trocar Cliente" : undefined}>
+                            <Building2 size={16} />
+                            {!isCollapsed && "Trocar Cliente"}
                         </button>
                     )}
                     <button onClick={() => logout()} className={`w-full flex items-center gap-2 text-xs text-red-400 hover:text-red-300 p-3 hover:bg-red-500/10 rounded-lg transition-colors ${isCollapsed ? 'justify-center' : ''}`} title={isCollapsed ? "Sair" : undefined}>

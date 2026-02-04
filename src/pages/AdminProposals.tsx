@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { GoogleGenAI } from "@google/genai";
 import { Sparkles } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -21,22 +20,14 @@ export const AdminProposals = ({ clientId }: { clientId: string }) => {
     const handleGenerateProposal = async () => {
         setIsGenerating(true);
         try {
-            const apiKey = GEMINI_API_KEY || localStorage.getItem('firebase_key') || '';
-            if (!apiKey) {
-                alert('API Key do Gemini não encontrada.');
-                return;
-            }
-
-            const ai = new GoogleGenAI({ apiKey });
+            const { callGeminiAPI } = await import('../utils/geminiAPI');
             const bk = await DB.getBaseKnowledge(clientId);
             const fullPrompt = `${PROMPTS.AGE_QUOD_AGIS}\n\nCONTEXTO DO CLIENTE (Base de Conhecimento):\n${bk}\n\nSOLICITAÇÃO DO USUÁRIO:\n${iaPrompt}`;
 
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: [{ role: 'user', parts: [{ text: fullPrompt }] }]
-            });
-
-            const html = response.text;
+            const html = await callGeminiAPI(
+                [{ role: 'user', text: fullPrompt }],
+                { temperature: 0.7 }
+            );
             // Save as document
             const newDoc: Document = {
                 id: Date.now().toString(),

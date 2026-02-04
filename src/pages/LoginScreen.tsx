@@ -19,7 +19,11 @@ export const LoginScreen = () => {
         if (user) {
             if (user.role === 'admin') {
                 navigate('/admin');
+            } else if (user.clientIds && user.clientIds.length > 1) {
+                // If user has multiple clients, go to selection screen
+                navigate('/select-client');
             } else if (user.clientId) {
+                // Single client, go direct
                 navigate(`/dashboard/${user.clientId}`);
             } else {
                 setError('Usuário autenticado, mas sem vínculo com empresa. Contate o suporte.');

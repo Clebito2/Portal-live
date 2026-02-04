@@ -57,13 +57,16 @@ export const UserManagement = () => {
         let mappingSuccess = false;
 
         try {
+            // Force lowercase for consistency
+            const emailToCreate = newEmail.toLowerCase();
+
             // 1. Create user in Firebase Authentication
             const { createUserWithEmailAndPassword } = await import('firebase/auth');
             const { auth } = await import('../services/firebase');
 
             console.log('🔐 Criando usuário no Firebase Auth...');
             try {
-                await createUserWithEmailAndPassword(auth, newEmail, newPassword);
+                await createUserWithEmailAndPassword(auth, emailToCreate, newPassword);
                 console.log('✅ Usuário criado no Firebase Auth');
                 authSuccess = true;
             } catch (authError: any) {
@@ -77,18 +80,15 @@ export const UserManagement = () => {
 
             // 2. Create mapping in Firestore with validation
             console.log('📝 Criando mapeamento no Firestore...');
-            const success = await DB.addUserMapping(newEmail, selectedClientId, user.email);
-
-            if (!success) {
-                throw new Error('Falha ao criar mapeamento no Firestore. Verifique as permissões e a conexão.');
-            }
+            // Agora o addUserMapping lança erro se falhar
+            await DB.addUserMapping(emailToCreate, selectedClientId, user.email);
 
             console.log('✅ Mapeamento criado com sucesso');
             mappingSuccess = true;
 
             // 3. Verify mapping was created
             console.log('🔍 Verificando mapeamento...');
-            const verifyMapping = await DB.getUserMapping(newEmail);
+            const verifyMapping = await DB.getUserMapping(emailToCreate);
 
             if (!verifyMapping || verifyMapping.clientId !== selectedClientId) {
                 throw new Error('Mapeamento não foi criado corretamente. Verifique no Firestore Console.');
@@ -119,8 +119,9 @@ export const UserManagement = () => {
                 errorMsg += 'Senha muito fraca';
             } else if (e.code === 'auth/invalid-email') {
                 errorMsg += 'Email inválido';
-            } else if (e.code === 'permission-denied') {
+            } else if (e.code === 'permission-denied' || (e.message && e.message.includes('permission-denied'))) {
                 errorMsg += 'Permissão negada. Verifique as regras do Firestore.';
+                errorMsg += '\n\n💡 Dica: Se você não é admin, solicite a um administrador para criar este usuário.';
             } else {
                 errorMsg += e.message || 'Erro desconhecido';
             }

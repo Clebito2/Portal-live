@@ -245,9 +245,10 @@ export const DB = {
     },
 
     getUserMapping: async (email: string) => {
+        const normalizedEmail = email.toLowerCase();
         if (isFirebaseReady && db) {
             try {
-                const d = await getDoc(doc(db, 'userMappings', email));
+                const d = await getDoc(doc(db, 'userMappings', normalizedEmail));
                 if (d.exists()) return { email: d.id, ...d.data() } as any;
                 return null;
             } catch (e) {
@@ -256,12 +257,13 @@ export const DB = {
             }
         }
         const mappings = JSON.parse(localStorage.getItem('userMappings') || '[]');
-        return mappings.find((m: any) => m.email === email) || null;
+        return mappings.find((m: any) => m.email === normalizedEmail) || null;
     },
 
     addUserMapping: async (email: string, clientId: string, createdBy: string): Promise<boolean> => {
+        const normalizedEmail = email.toLowerCase();
         const mapping = {
-            email,
+            email: normalizedEmail,
             clientId,
             createdAt: new Date().toISOString(),
             createdBy
@@ -269,16 +271,16 @@ export const DB = {
 
         try {
             if (isFirebaseReady && db) {
-                console.log(`📝 Salvando mapeamento no Firestore para ${email}...`);
-                await setDoc(doc(db, 'userMappings', email), mapping);
-                console.log(`✅ Mapeamento salvo no Firestore para ${email}`);
+                console.log(`📝 Salvando mapeamento no Firestore para ${normalizedEmail}...`);
+                await setDoc(doc(db, 'userMappings', normalizedEmail), mapping);
+                console.log(`✅ Mapeamento salvo no Firestore para ${normalizedEmail}`);
 
                 // Verify the document was created
                 console.log(`🔍 Verificando se o documento foi criado...`);
-                const verify = await getDoc(doc(db, 'userMappings', email));
+                const verify = await getDoc(doc(db, 'userMappings', normalizedEmail));
                 if (!verify.exists()) {
                     console.error('❌ Documento não foi criado no Firestore');
-                    return false;
+                    throw new Error('Falha ao verificar criação do mapeamento. Permissão pode ter sido negada.');
                 }
 
                 const data = verify.data();
@@ -286,25 +288,27 @@ export const DB = {
                 return true;
             } else {
                 const mappings = JSON.parse(localStorage.getItem('userMappings') || '[]');
-                const idx = mappings.findIndex((m: any) => m.email === email);
+                const idx = mappings.findIndex((m: any) => m.email === normalizedEmail);
                 if (idx >= 0) mappings[idx] = mapping;
                 else mappings.push(mapping);
                 localStorage.setItem('userMappings', JSON.stringify(mappings));
-                console.log(`✅ Mapeamento salvo no localStorage para ${email}`);
+                console.log(`✅ Mapeamento salvo no localStorage para ${normalizedEmail}`);
                 return true;
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('❌ Erro ao salvar mapeamento:', error);
-            return false;
+            // Re-throw the error so the UI can handle it
+            throw error;
         }
     },
 
     removeUserMapping: async (email: string) => {
+        const normalizedEmail = email.toLowerCase();
         if (isFirebaseReady && db) {
-            await deleteDoc(doc(db, 'userMappings', email));
+            await deleteDoc(doc(db, 'userMappings', normalizedEmail));
         } else {
             let mappings = JSON.parse(localStorage.getItem('userMappings') || '[]');
-            mappings = mappings.filter((m: any) => m.email !== email);
+            mappings = mappings.filter((m: any) => m.email !== normalizedEmail);
             localStorage.setItem('userMappings', JSON.stringify(mappings));
         }
     },

@@ -11,6 +11,7 @@ import { AdminProposals } from './pages/AdminProposals';
 import { GlobalStyles } from './styles/GlobalStyles';
 import { Agentes } from './components/Agentes';
 import { UserManagement } from './components/UserManagement';
+import { ClickUpBoard } from './components/ClickUpBoard';
 
 // Wrapper to pass context to components
 const RouteWrapper = ({ Component }: { Component: any }) => {
@@ -26,11 +27,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 import { SelectionScreen } from './pages/SelectionScreen';
+import { ClientSelection } from './pages/ClientSelection';
 
 const AppRoutes = () => {
     return (
         <Routes>
             <Route path="/login" element={<LoginScreen />} />
+            <Route path="/select-client" element={<ProtectedRoute><ClientSelection /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><SelectionScreen /></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute><UserManagement /></ProtectedRoute>} />
             <Route path="/dashboard/:clientId" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
@@ -38,6 +41,7 @@ const AppRoutes = () => {
                 <Route path="agenda" element={<RouteWrapper Component={Agenda} />} />
                 <Route path="documents" element={<RouteWrapper Component={Documents} />} />
                 <Route path="proposals" element={<RouteWrapper Component={AdminProposals} />} />
+                <Route path="projects" element={<RouteWrapper Component={ClickUpBoard} />} />
                 <Route path="agentes" element={<RouteWrapper Component={Agentes} />} />
             </Route>
             <Route path="/" element={<Navigate to="/login" />} />

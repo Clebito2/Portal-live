@@ -36,11 +36,25 @@ export const Dashboard = () => {
 
         // Security: Clients can only access their own dashboard
         if (user.role === 'client') {
-            if (user.clientId && user.clientId !== clientId) {
-                navigate(`/dashboard/${user.clientId}`);
+            // Updated Security: Check if targetId is in allowed clientIds
+            // Updated Security: Check if targetId is in allowed clientIds
+            const allowedClients = user.clientIds || [user.clientId];
+
+            // DEBUG: Hardcode allowance for testing if needed, but logic should hold.
+            // Check strict equality
+            const isAllowed = allowedClients.some(id => id === targetId) || user.clientId === targetId;
+
+            if (!isAllowed) {
+                // Try to redirect to primary client if available
+                if (user.clientId) {
+                    navigate(`/dashboard/${user.clientId}`);
+                } else if (allowedClients.length > 0) {
+                    navigate(`/dashboard/${allowedClients[0]}`);
+                } else {
+                    navigate('/login');
+                }
                 return;
             }
-            targetId = user.clientId;
         }
 
         if (targetId) {
@@ -73,12 +87,9 @@ export const Dashboard = () => {
                 }
             });
 
-            // SECURITY: Validate client isolation
-            if (user && user.role === 'client' && targetId !== user.clientId) {
-                console.warn('[SECURITY] Cliente tentando acessar dashboard de outro cliente. Redirecionando...');
-                navigate(`/dashboard/${user.clientId}`);
-                return;
-            }
+            // SECURITY CHECK REMOVED: Redundant and incorrect for multi-client users.
+            // The check at the top of useEffect already handles permissions via 'allowedClients'.
+            // if (user && user.role === 'client' && targetId !== user.clientId) ...
         } else {
             // Fallback if no ID
             if (user.role === 'admin') navigate('/admin');

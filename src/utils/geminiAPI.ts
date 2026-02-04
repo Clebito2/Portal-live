@@ -1,12 +1,12 @@
 // Direct REST API integration for Gemini (bypass SDK issues)
 import { GEMINI_API_KEY } from './constants';
 
-export interface GeminiMessage {
+export interface Message {
     role: 'user' | 'model';
     text: string;
 }
 
-export interface GeminiRequestConfig {
+export interface RequestConfig {
     systemInstruction?: string;
     temperature?: number;
     maxOutputTokens?: number;
@@ -17,8 +17,8 @@ export interface GeminiRequestConfig {
  * Strategy: Primary (Pro) -> Fallback (Flash)
  */
 export async function callGeminiAPI(
-    messages: GeminiMessage[],
-    config: GeminiRequestConfig = {}
+    messages: Message[],
+    config: RequestConfig = {}
 ): Promise<string> {
     const apiKey = GEMINI_API_KEY || localStorage.getItem('firebase_key') || '';
 
@@ -33,6 +33,7 @@ export async function callGeminiAPI(
     }));
 
     // API endpoint - Using gemini-2.5-flash (model with available quota)
+    // Note: v1beta endpoint allows API Keys from Referrer-restricted sources
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const requestBody: any = {
