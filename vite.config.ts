@@ -5,6 +5,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
+    // base configuravel: '/' no Firebase Hosting, '/projeto_ViDi/' no GitHub Pages
+    base: env.VITE_BASE_PATH || '/',
     server: {
       port: 5173,
       host: '0.0.0.0',
