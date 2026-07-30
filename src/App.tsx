@@ -63,7 +63,7 @@ export const App = () => {
     return (
         <AuthProvider>
             <GlobalStyles />
-            <BrowserRouter>
+            <BrowserRouter basename={import.meta.env.BASE_URL}>
                 <AppContent />
             </BrowserRouter>
         </AuthProvider>
